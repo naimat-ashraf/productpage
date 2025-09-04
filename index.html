@@ -1,0 +1,763 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stella Fashion Store</title>
+  <link rel="stylesheet" href="">
+</head>
+<style>
+  body { margin: 0; font-family: Arial, sans-serif; }
+
+/* Headers */
+.top-header { background: #f1f1f1; padding: 5px 15px; display: flex; justify-content: space-between; font-size: 13px; }
+.main-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.logo { font-size: 24px; font-weight: bold; }
+.search-bar { flex: 1; margin:0 30px; padding: 9px; }
+.header-icons span { margin: 0 10px; cursor: pointer; }
+
+/* Hero */
+.hero { position: relative; text-align: left; }
+.hero img { width: 100%; height: 500px; object-fit: cover; }
+.hero-text { position: absolute; top: 30%; left: 10%; color: white; font-size: 40px; }
+
+/* Categories */
+.categories { padding: 30px; }
+.category-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.category-grid div  { background: rgb(228, 227, 227); padding: 20px; text-align: center; border-radius: 8px;  }
+
+/* Products */
+.new-arrivals { padding: 30px;  }
+.products { display: flex; gap: 40px; }
+.product { border: 1px solid #2b2a2a; padding: 20px; border-radius: 8px; text-align: center; width: 200px; }
+.product img { width: 100%; border-radius: 5px; }
+button { background: black; color: white; border: none; padding: 8px 12px; cursor: pointer; margin-top: 10px; }
+
+/* Banners */
+.banners, .featured { display: flex; gap: 160px; padding: 70px; }
+.banner { flex: 1; padding: 30px; text-align: center; border-radius: 8px; }
+.blue { background: #c7cacc; color: white; }
+.white { background: #f9f9f9; }
+
+/* Brands */
+.brands { padding: 30px; }
+.brand-logos { display: flex; gap: 20px; }
+
+/* Lifestyle */
+.lifestyle { display: flex; gap: 20px; padding: 30px; }
+.lifestyle-banner { flex: 1; background: #ddd; padding: 50px; border-radius: 8px; }
+
+
+/* Cart Panel */
+.cart-panel { position: fixed; right: -350px; top: 0; width: 300px; height: 100%; background: white; box-shadow: -2px 0 8px rgba(0,0,0,0.2); padding: 20px; transition: right 0.3s ease; z-index: 1000; }
+.cart-panel.open { right: 0; }
+
+/* Product Boxes Section */
+.product-boxes {
+  padding: 60px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.product-boxes h2 {
+  font-size: 28px;
+  margin-bottom: 40px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  justify-items: center;
+}
+
+/* Product Card */
+.product-card {
+  width: 280px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Product Image Box (centered images) */
+.product-img {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;     /* vertical center */
+  justify-content: center; /* horizontal center */
+  background: #f5f5f5;     /* optional background */
+}
+
+.product-img img {
+  max-width: 100%;
+  margin-top: 20px;
+  max-height: 100%;
+  object-fit: contain;   /* keep full image visible */
+  position: absolute;
+  transition: opacity 0.5s ease; /* smooth fade */
+}
+
+/* Show front image first */
+.product-img .img-front {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Hide back image */
+.product-img .img-back {
+  opacity: 0;
+  z-index: 2;
+}
+
+/* On hover: swap images */
+.product-img:hover .img-front {
+  opacity: 0;
+}
+
+.product-img:hover .img-back {
+  opacity: 1;
+}
+
+/* Product Info */
+.product-info {
+  padding: 15px;
+}
+
+.product-info h3 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+}
+
+.product-info p {
+  color: rgb(107, 107, 107);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.product-info button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.product-info button:hover {
+  background: #464445;
+}
+
+/* Brand Section */
+.brands {
+  padding: 60px 20px;
+  text-align: center;
+  background: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.brands h2 {
+  font-size: 26px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #111;
+}
+
+/* Grid of brands */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 25px;
+  align-items: center;
+  justify-items: center;
+}
+
+/* Brand item styling */
+.brand-item {
+  font-size: 18px;
+  font-weight: 500;
+  color: #444;
+  padding: 15px 25px;
+  border: 1px solid #8f8d8d;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.brand-item:hover {
+  background: #111;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Extra Banner Section */
+.extra-banner {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  margin: 60px 0;
+}
+
+.extra-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: BLOCK;
+  filter: brightness(80%); /* darken for text readability */
+}
+
+/* Footer */
+.footer {
+  background: #424242;
+  color: #e7e1e1;
+  padding: 60px 20px 20px;
+  font-size: 14px;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-col h3 {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.footer-col h4 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.footer-col p {
+  line-height: 1.6;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 8px;
+}
+
+.footer-col ul li a {
+  color: #aaa;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+  color: #fff;
+}
+
+/* Social Icons */
+.social-icons a {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 18px;
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #4b4949;
+}
+
+/* Bottom Bar */
+.footer-bottom {
+  border-top: 1px solid #818080;
+  text-align: center;
+  padding-top: 15px;
+  color: #777;
+  font-size: 13px;
+}
+
+/* About Section */
+.about-section {
+  padding: 80px 20px;
+  background: #f9f9f9;
+}
+
+.about-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap; /* responsive */
+}
+
+.about-img img {
+  width: 100%;
+  height: 40vh;
+  border-radius: 120px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.about-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.about-text h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #111;
+}
+
+.about-text p {
+  font-size: 16px;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+.about-text button {
+  background: #111;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.about-text button:hover {
+  background: #5e5c5d;
+}
+
+.contact-section {
+  padding: 80px 20px;
+  background: #f9f9f9;
+}
+
+.contact-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+.contact-form {
+  flex: 1;
+  min-width: 300px;
+}
+
+.contact-form h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #111;
+}
+
+.contact-form p {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 80%;
+  padding: 12px 15px;
+  border: 1px solid #413d3d;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.contact-form button {
+  background: #111;
+  width: 80%;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-form button:hover {
+  background: #8b8b8b;
+}
+
+.contact-img {
+  flex:0.5 ;
+  width: 60%;
+  height: 40%;
+overflow: hidden;
+  border-radius: 20px;
+}
+
+.contact-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.contact-img:hover img {
+  transform: scale(1.1);
+}
+
+</style>
+<body>
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="left">Trusted Shipping | Easy Returns | Secure Shopping</div>
+    <div class="right">Welcome, Guest</div>
+  </header>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="logo">charles&keith</div>
+    <input type="text" placeholder="What are you looking for?" class="search-bar">
+    <div class="header-icons">
+      <span>❤</span>
+      <span>🔔</span>
+      <span class="cart-icon" onclick="toggleCart()">🛒 <span id="cart-count">0</span></span>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1></h1>
+      <p></p>
+    </div>
+    <img src="https://www.charleskeithgroup.com/wp-content/uploads/2025/01/charles-keith-group-home-about-ck-banner-winter24-hsh-1920x700-1-1536x560.jpg"height="100vh" width="100%" alt="Hero Banner">
+  </section>
+
+  
+
+  <!-- Categories -->
+  <section class="categories">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+      <div>Personal Care</div>
+      <div>Accessories</div>
+      <div>Coats</div>
+      <div>Sweat Pants</div>
+      <div>T-Shirts</div>
+      <div>Shorts</div>
+      <div>Sneakers</div>
+      <div>bags</div>
+    </div>
+  </section>
+
+<!-- About Section -->
+<section class="about-section">
+  <div class="about-container">
+    <div class="about-img">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGDZf15JEpcIn8gnjIJGffe0wb50YkwuCmpg&s" alt="About Charles & Keith">
+    </div>
+    <div class="about-text">
+      <h2>About Charles & Keith</h2>
+      <p>
+        Charles & Keith is a world-renowned fashion brand known for its 
+        contemporary footwear, handbags, and accessories.  
+        With a vision to empower women globally, the brand blends 
+        sophistication and accessibility, delivering timeless designs that 
+        inspire confidence and elegance.
+      </p>
+      <button>Discover More</button>
+    </div>
+  </div>
+</section>
+
+
+  <section class="new-arrivals">
+    <h2><center>New Arrival</center></h2>
+    <div class="products">
+      <div class="product">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw7885129f/images/hi-res/2025-L6-CK2-20671797-J8-1.jpg?sw=1152&sh=1536" alt="Classic Striped Shirt">
+        <p>Classic black bag</p>
+        <p>$140.00</p>
+        <button onclick="addToCart('Classic black bag ',40)">Add to Cart</button>
+      </div>
+      <div class="product">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw67694499/images/hi-res/2025-L6-CK2-30701620-S1-1.jpg?sw=1152&sh=1536" alt="Elegance White Dress">
+        <p>Classic Redwine bag</p>
+        <p>$40.00</p>
+        <button onclick="addToCart('Elegance White Dress',40)">Add to Cart</button>
+      </div>
+      <div class="product">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dwfcfde1a5/images/hi-res/2025-L6-CK2-30701583-2-R4-1.jpg?sw=1152&sh=1536" alt="4 Button Blazer">
+        <p>4 Beach bag</p>
+        <p>$40.00</p>
+        <button onclick="addToCart('4 Button Blazer',40)">Add to Cart</button>
+      </div>
+      <div class="product">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw7150fc27/images/hi-res/2025-L6-CK2-20782764-1-J8-1.jpg?sw=1152&sh=1536" alt="Varsity Jacket">
+        <p>Shoulder bag</p>
+        <p>$40.00</p>
+        <button onclick="addToCart('Varsity Jacket',40)">Add to Cart</button>
+      </div>
+
+      <div class="product">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dwe56cbf42/images/hi-res/2025-L6-CK2-40271626-R2-1.jpg?sw=1152&sh=1536" alt="Varsity Jacket">
+        <p>Pink vibes</p>
+        <p>$40.00</p>
+        <button onclick="addToCart('Varsity Jacket',40)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banners -->
+  <section class="banners"><div>
+    <img src="https://www.charleskeith.com/on/demandware.static/-/Library-Sites-CharlesKeith/default/dw59811c28/images/Muse/Summer22/koa-repush/charles-keith-summer-22-koa-repush-blog-01-m.jpg" height="700px" width=""></div>
+    
+    <img src="https://www.charleskeith.co.uk/on/demandware.static/-/Library-Sites-CharlesKeithEU/default/dwe31eed59/images/Muse/Summer22/koa-repush/charles-keith-summer-22-koa-repush-blog-05.jpg" height="700px">
+  </section>
+
+  
+   <!-- Product Boxes with Hover Image -->
+<section class="product-boxes">
+  <h2><u>Shoes Section</h2></u>
+  <div class="product-grid">
+
+    <div class="product-card">
+      <div class="product-img">
+        <img src="https://www.charleskeith.com/on/demandware.static/-/Library-Sites-CharlesKeith/default/dw9cd451f7/images/homepage/2023/charles-keith-home-curated-basics-week-46-tw-desktop-1000x1333.jpg" alt="Red Handbag" class="img-front">
+        <img src="https://i.pinimg.com/736x/c2/5c/ed/c25cedd329ef0dc604cea89156636a90.jpg"alt="Red Handbag Hover" class="img-back">
+      </div>
+      <div class="product-info">
+        <h3>Red Handbag</h3>
+        <p>$60.00</p>
+        <button onclick="addToCart('Red Handbag',60)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw59706045/images/hi-res/2021-L6-CK1-91720012-01-1.jpg?sw=756&sh=1008" alt="Stylish Heels" class="img-front">
+        <img src="https://cdn.shopify.com/s/files/1/0263/0837/8727/files/knee_high_boots_ireland_long_boots_for_women_600x600.png?v=1689253834" alt="Stylish Heels Hover" class="img-back">
+      </div>
+      <div class="product-info">
+        <h3>Stylish Heels</h3>
+        <p>$80.00</p>
+        <button onclick="addToCart('Stylish Heels',80)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw730f0152/images/hi-res/2024-L7-CK1-60280462-16-8.jpg?sw=756&sh=1008" alt="Leather Jacket" class="img-front">
+        <img src="https://www.charleskeith.co.uk/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dw441535a8/images/hi-res/2023-L2-CK1-71720047-08-8.jpg?sw=756&sh=1008" alt="Leather Jacket Hover" class="img-back">
+      </div>
+      <div class="product-info">
+        <h3>Leather Jacket</h3>
+        <p>$120.00</p>
+        <button onclick="addToCart('Leather Jacket',120)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dwb46cb81b/images/hi-res/2025-L2-CK1-70920166-01-1.jpg?sw=756&sh=1008" alt="Sunglasses" class="img-front">
+        <img src="https://www.charleskeith.com/dw/image/v2/BCWJ_PRD/on/demandware.static/-/Sites-ck-products/default/dwa483a5ba/images/hi-res/2025-L2-CK1-70920166-01-8.jpg?sw=756&sh=1008" alt="Sunglasses Hover" class="img-back">
+      </div>
+      <div class="product-info">
+        <h3>Designer Sunglasses</h3>
+        <p>$50.00</p>
+        <button onclick="addToCart('Designer Sunglasses',50)">Add to Cart</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+  <section class="brands">
+  <h2>Best Sellers</h2>
+  <div class="brand-grid">
+    <div class="brand-item">Bags</div>
+    <div class="brand-item">Dresses</div>
+    <div class="brand-item">Shoes</div>
+    <div class="brand-item">Pants</div>
+    <div class="brand-item">Shoulder bags</div>
+    <div class="brand-item">Long boots</div>
+  </div>
+</section>
+
+  <!-- Extra Hero Banner -->
+<section class="extra-banner">
+  <img src="https://www.charleskeithgroup.com/wp-content/uploads/2022/12/Our-Model-1.jpg" alt="New Banner">
+</section>
+<hr>
+ 
+<!-- Contact Section -->
+<section class="contact-section">
+  <div class="contact-container">
+
+    <!-- Left Side Form -->
+    <div class="contact-form">
+      <h2>Get in Touch</h2>
+      <p>We’d love to hear from you! Fill out the form and we’ll get back to you soon.</p>
+      
+      <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea rows="5" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Right Side Image -->
+    <div class="contact-img">
+      <img src="https://www.charleskeith.co.uk/on/demandware.static/-/Library-Sites-CharlesKeithEU/default/dw0482bd78/images/Muse/Spring24/lunar-new-year/campaign/charles-keith-spring-24-lny-blog-campaign-10a-m.jpg" alt="Contact Us" width="50%" height="100%">
+    </div>
+  </div>
+</section>
+<hr>
+
+
+
+
+
+  <!-- Footer -->
+  <!-- Footer -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <div class="footer-col">
+      <h2>charles&keith</h2>
+      <p>Luxury fashion & beauty at your fingertips.<br>Simple is More.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Women</a></li>
+        <li><a href="#">Men</a></li>
+        <li><a href="#">Accessories</a></li>
+        <li><a href="#">New Arrivals</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="social-icons">
+        <a href="#">🌐</a>
+        <a href="#">📘</a>
+        <a href="#">📸</a>
+        <a href="#">🐦</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 charles&keith clone. All rights reserved.</p>
+  </div>
+</footer>
+
+
+  <!-- Cart Side Panel -->
+  <div id="cart-panel" class="cart-panel">
+    <h3>Your Cart</h3>
+    <ul id="cart-list"></ul>
+    <p>Total: $<span id="cart-total">0.00</span></p>
+    <button onclick="closeCart()">Close</button>
+  </div>
+
+  <script src="script.js">
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const cartCount = document.getElementById("cart-count");
+const cartList = document.getElementById("cart-list");
+const cartTotal = document.getElementById("cart-total");
+const cartPanel = document.getElementById("cart-panel");
+
+function updateCart() {
+  cartList.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+    let li = document.createElement("li");
+    li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+
+    let removeBtn = document.createElement("button");
+    removeBtn.textContent = "❌";
+    removeBtn.style.marginLeft = "10px";
+    removeBtn.onclick = () => removeFromCart(index);
+    li.appendChild(removeBtn);
+
+    cartList.appendChild(li);
+  });
+
+  cartTotal.textContent = total.toFixed(2);
+  cartCount.textContent = cart.length;
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function addToCart(name, price) {
+  cart.push({ name, price });
+  updateCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function toggleCart() {
+  cartPanel.classList.toggle("open");
+}
+
+function closeCart() {
+  cartPanel.classList.remove("open");
+}
+
+updateCart();
+
+  </script>
+
+</body>
+</html>
